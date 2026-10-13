@@ -1,3 +1,7 @@
+# JDK for msys2
+
+JDK for msys2. Thanks the [yanjiew1](https://github.com/yanjiew1) and [TheShermanTanker](https://github.com/TheShermanTanker)!
+
 # Welcome to the JDK!
 
 For build instructions please see the
