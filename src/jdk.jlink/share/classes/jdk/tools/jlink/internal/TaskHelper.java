@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, 2025, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2015, 2026, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -24,6 +24,7 @@
  */
 package jdk.tools.jlink.internal;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
@@ -362,10 +363,13 @@ public final class TaskHelper {
 
                 if (plugin instanceof DefaultCompressPlugin) {
                     plugOption
-                        = new PluginOption(false,
+                        = new PluginOption(true,
                             (task, opt, arg) -> {
                                 Map<String, String> m = addArgumentMap(plugin);
-                                m.put(plugin.getName(), DefaultCompressPlugin.LEVEL_2);
+                                String level = (arg != null && !arg.isEmpty())
+                                        ? arg
+                                        :"zip-6";
+                                m.put(plugin.getName(), level);
                             }, false, "--compress", "-c");
                     mainOptions.add(plugOption);
                 } else if (plugin instanceof DefaultStripDebugPlugin) {
@@ -603,7 +607,7 @@ public final class TaskHelper {
                 .filter(option -> !option.isHidden())
                 .sorted()
                 .forEach(option -> {
-                     log.println(bundleHelper.getMessage(option.resourceName()));
+                     log.println(bundleHelper.getMessage(option.resourceName(), File.pathSeparator));
                 });
 
             log.println(bundleHelper.getMessage("main.command.files"));

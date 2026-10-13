@@ -5,7 +5,7 @@ JDK for msys2. Thanks the [yanjiew1](https://github.com/yanjiew1) and [TheSherma
 # Welcome to the JDK!
 
 For build instructions please see the
-[online documentation](https://openjdk.org/groups/build/doc/building.html),
+[online documentation](https://git.openjdk.org/jdk/blob/master/doc/building.md),
 or either of these files:
 
 - [doc/building.html](doc/building.html) (html version)

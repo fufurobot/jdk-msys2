@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019, 2025, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2019, 2026, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -180,6 +181,15 @@ final class OverridableResource {
         return setExternal(toPath(v));
     }
 
+    Source probe() {
+        try {
+            return saveToStream(null);
+        } catch (IOException ex) {
+            // Should never happen.
+            throw new UncheckedIOException(ex);
+        }
+    }
+
     Source saveToStream(OutputStream dest) throws IOException {
         if (dest == null) {
             return sendToConsumer(null);
@@ -247,7 +257,7 @@ final class OverridableResource {
     private boolean useExternal(ResourceConsumer dest) throws IOException {
         boolean used = externalPath != null && Files.exists(externalPath);
         if (used && dest != null) {
-            Log.verbose(I18N.format("message.using-custom-resource-from-file",
+            Log.useResource(I18N.format("message.using-custom-resource-from-file",
                     getPrintableCategory(),
                     externalPath.toAbsolutePath().normalize()));
 
@@ -274,7 +284,7 @@ final class OverridableResource {
                 final Path logResourceName = Optional.ofNullable(logPublicName).orElse(
                         resourceName).normalize();
 
-                Log.verbose(I18N.format("message.using-custom-resource",
+                Log.useResource(I18N.format("message.using-custom-resource",
                         getPrintableCategory(), logResourceName));
 
                 try (InputStream in = Files.newInputStream(customResource)) {
@@ -294,7 +304,7 @@ final class OverridableResource {
                     .orElseGet(() -> {
                         return resourceName(dest);
                     });
-            Log.verbose(I18N.format("message.using-default-resource",
+            Log.useResource(I18N.format("message.using-default-resource",
                     defaultName, getPrintableCategory(), resourceName));
 
             try (InputStream in = defaultResourceGetter.apply(defaultName)) {
@@ -311,7 +321,7 @@ final class OverridableResource {
                     .orElseGet(() -> {
                         return resourceName(dest);
                     });
-            Log.verbose(I18N.format("message.no-default-resource",
+            Log.useResource(I18N.format("message.no-default-resource",
                     getPrintableCategory(), resourceName));
         }
     }
